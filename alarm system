@@ -1,0 +1,62 @@
+#include <LiquidCrystal.h>
+
+LiquidCrystal lcd(2, 3, 4, 5, 6, 7);
+
+// defines pins numbers
+const int trigPin = 9;
+const int echoPin = 10;
+const int ledPin = 11;
+const int buzzer = 13;
+
+// defines variables
+long duration;
+int distance;
+int safetyDistance;
+
+
+void setup() {
+pinMode(trigPin, OUTPUT); // Sets the trigPin as an Output
+pinMode(echoPin, INPUT); // Sets the echoPin as an Input
+pinMode(buzzer, OUTPUT);
+pinMode(ledPin, OUTPUT); 
+Serial.begin(9600); // Starts the serial communication
+  
+lcd.begin(16, 2);
+
+lcd.print("Alarm is on"); // prints out the status on the alarm system
+}
+
+
+
+void loop() {
+// Clears the trigPin
+digitalWrite(trigPin, LOW);
+delayMicroseconds(2);
+
+// Sets the trigPin on HIGH state for 10 micro seconds
+digitalWrite(trigPin, HIGH);
+delayMicroseconds(10);
+digitalWrite(trigPin, LOW);
+
+// Reads the echoPin, returns the sound wave travel time in microseconds
+duration = pulseIn(echoPin, HIGH);//
+
+// Calculating the distance
+distance = duration*0.034/2;
+
+safetyDistance = distance;
+if (safetyDistance <= 5){
+  digitalWrite(buzzer, HIGH); // turns on buzzer when distance threshold has been activated
+  digitalWrite(ledPin, HIGH); // lights up led when distance threshold has been activated
+  lcd.print("triggered"); // lets user know that the alarm system has been triggered
+}
+else{
+  digitalWrite(buzzer, LOW); // turns off buzzer when the sensor is not being turned on
+  digitalWrite(ledPin, LOW); // turns off buzzer when the sensor is not being turned on
+                                 
+}
+
+// Prints the distance on the Serial Monitor
+Serial.print("Distance: ");
+Serial.println(distance);
+}
